@@ -52,18 +52,17 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+// Create a new product
+router.post(`/`, async (req, res) => {
   try {
-    // Validate category
+    // Validate the category ID
     const category = await Category.findById(req.body.category);
     if (!category) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid category." });
+      return res.status(400).send("Invalid Category");
     }
 
-    // Create a new product
-    const product = new Product({
+    // Create a new product instance
+    let product = new Product({
       name: req.body.name,
       description: req.body.description,
       richDescription: req.body.richDescription,
@@ -77,30 +76,48 @@ router.post("/", async (req, res) => {
       isFeatured: req.body.isFeatured,
     });
 
-    // Save the product
-    const savedProduct = await product.save();
-    if (!savedProduct) {
-      return res
-        .status(500)
-        .json({ success: false, message: "The product could not be created." });
+    // Save the product to the database
+    product = await product.save();
+
+    if (!product) {
+      return res.status(500).send("The product cannot be created");
     }
 
-    // Send success response
-    return res.status(201).json({
-      success: true,
-      message: "Product created successfully!",
-      data: savedProduct,
-    });
-  } catch (err) {
-    // Handle unexpected errors
-    return res.status(500).json({
+    // Send the created product as a response
+    res.status(201).send(product);
+  } catch (error) {
+    console.error("Error creating product:", error.message);
+    res.status(500).json({
       success: false,
-      message: "An error occurred while creating the product.",
-      error: err.message,
+      message: "An error occurred while creating the product",
+      error: error.message,
     });
   }
 });
+// router.post(`/`, async (req, res) => {
+//   const category = await Category.findById(req.body.category);
+//   if (!category) return res.status(400).send("Invalid Category");
 
+//   let product = new Product({
+//     name: req.body.name,
+//     description: req.body.description,
+//     richDescription: req.body.richDescription,
+//     image: req.body.image,
+//     brand: req.body.brand,
+//     price: req.body.price,
+//     category: req.body.category,
+//     countInStock: req.body.countInStock,
+//     rating: req.body.rating,
+//     numReviews: req.body.numReviews,
+//     isFeatured: req.body.isFeatured,
+//   });
+
+//   product = await product.save();
+
+//   if (!product) return res.status(500).send("The product cannot be created");
+
+//   res.send(product);
+// });
 // update products
 router.put("/:id", async (req, res) => {
   // Validate product ID
