@@ -92,6 +92,62 @@ router.post("/register", async (req, res) => {
 });
 
 // Delete Users
+// router.post("/register", async (req, res) => {
+//   try {
+//     // Validate required fields
+//     const {
+//       name,
+//       email,
+//       password,
+//       phone,
+//       isAdmin,
+//       street,
+//       apartment,
+//       zip,
+//       city,
+//       country,
+//     } = req.body;
+//     if (!name || !email || !password) {
+//       return res.status(400).send("Name, email, and password are required!");
+//     }
+
+//     // Check if the email already exists in the database
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).send("User with this email already exists!");
+//     }
+
+//     // Create new user instance
+//     const hashedPassword = bcrypt.hashSync(password, 10);
+//     const user = new User({
+//       name,
+//       email,
+//       passwordHash: hashedPassword,
+//       phone,
+//       isAdmin,
+//       street,
+//       apartment,
+//       zip,
+//       city,
+//       country,
+//     });
+
+//     // Save the user to the database
+//     const savedUser = await user.save();
+//     if (!savedUser) {
+//       return res
+//         .status(500)
+//         .send("The user cannot be created due to a server error.");
+//     }
+
+//     // Send the created user as the response, excluding the passwordHash
+//     const { passwordHash, ...userWithoutPassword } = savedUser.toObject();
+//     res.status(201).send(userWithoutPassword);
+//   } catch (error) {
+//     console.error("Error during user registration:", error);
+//     res.status(500).send("An error occurred during registration.");
+//   }
+// });
 router.delete("/:id", async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
